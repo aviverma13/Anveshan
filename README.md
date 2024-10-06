@@ -1,4 +1,4 @@
-# Anveshan
+# Anveshan App
 
 Required commands to run the project:
 
