@@ -7,10 +7,17 @@ import {
   Button,
   TouchableOpacity,
   useWindowDimensions,
+  StyleSheet,
+  Platform,
 } from "react-native";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Laptops, Mobiles, watches } from "../../assets/DataBase/db";
+import {
+  CarouselData,
+  Laptops,
+  Mobiles,
+  watches,
+} from "../../assets/DataBase/db";
 import {
   addToCartFunction,
   CartFunction,
@@ -20,21 +27,41 @@ import {
 import { Toast } from "toastify-react-native";
 import { router } from "expo-router";
 import { GlobalStateContext } from "../../Context/GlobalContext";
+import Carousel, { Pagination } from "react-native-snap-carousel-v4";
 
 const Products = () => {
+  const { width } = useWindowDimensions();
+  const carouselRef = useRef();
   return (
-    <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-      <View className="w-full">
-        <Image
-          className="w-full h-52"
-          resizeMode="contain"
-          source={require("../../assets/Products/Offers.webp")}
-        />
-      </View>
-      <ProductList title="Popular Mobiles" data={Mobiles} />
-      <ProductList title="Amazing Laptops" data={Laptops} />
-      <ProductList title="Premium Watches" data={watches} />
-    </ScrollView>
+    <>
+      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+        <View className="  h-[25vh]  shadow-md shadow-zinc-400">
+          <Carousel
+            key={width}
+            ref={carouselRef}
+            data={CarouselData}
+            sliderWidth={width}
+            itemWidth={width - 60}
+            hasParallaxImages={true}
+            renderItem={({ item }) => (
+              <>
+                <View style={styles.item}>
+                  <View
+                    style={styles.imageContainer}
+                    className="bg-transparent"
+                  >
+                    <Image source={item.Image} style={styles.image} />
+                  </View>
+                </View>
+              </>
+            )}
+          />
+        </View>
+        <ProductList title="Popular Mobiles" data={Mobiles} />
+        <ProductList title="Amazing Laptops" data={Laptops} />
+        <ProductList title="Premium Watches" data={watches} />
+      </ScrollView>
+    </>
   );
 };
 
@@ -97,8 +124,7 @@ const Product = ({ item }) => {
 
     if (list == null || list?.length < 10) {
       addToCartFunction(CartData);
-    setAddToCart(true);
-
+      setAddToCart(true);
     } else {
       Toast.warn("Wishlist can include only 10 items.");
     }
@@ -148,3 +174,23 @@ const Product = ({ item }) => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  item: {
+    width: "100%",
+    height: "100%",
+  },
+  imageContainer: {
+    width: "100%",
+    height: "100%",
+    marginBottom: Platform.select({ ios: 0, android: 1 }), // Prevent a random Android rendering issue
+    borderRadius: 8,
+    // backgroundColor:"#333"
+  },
+  image: {
+    width: "100%",
+    height: "100%",
+    ...StyleSheet.absoluteFillObject,
+    resizeMode: "contain",
+  },
+});

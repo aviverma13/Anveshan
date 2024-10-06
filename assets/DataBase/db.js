@@ -46,7 +46,7 @@ export const Laptops = [
     addToCart: false,
   },
   {
-    productId:32,
+    productId: 32,
     productName: "Hp Omen",
     productPrice: "1,22,009",
     productImage: require("../Products/Laptop/hpomen.jpg"),
@@ -112,4 +112,12 @@ export const watches = [
     productImage: require("../Products/watch/armani.jpg"),
     addToCart: false,
   },
+];
+
+export const CarouselData = [
+  { imageId: 100, Image: require("../../assets/Products/Offers.webp") },
+  { imageId: 101, Image: require("../../assets/Products/Offers2.webp") },
+  { imageId: 102, Image: require("../../assets/Products/Offers3.webp") },
+  { imageId: 102, Image: require("../../assets/Products/Offers4.webp") },
+
 ];
