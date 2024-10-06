@@ -10,6 +10,7 @@ import {
 import React, { useCallback, useContext, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
+  addToCartFunction,
   addToSavedForLaterFunction,
   GetCartItemAsync,
   GetSavedForLaterItemAsync,
@@ -20,6 +21,7 @@ import { useFocusEffect } from "expo-router";
 import { GlobalStateContext } from "../../Context/GlobalContext";
 import SaveToLaterIcon from "../../assets/SvgIcons/SaveToLater";
 import DeleteIcon from "../../assets/SvgIcons/Delete";
+import CartIcon from "../../assets/SvgIcons/Cart";
 
 const Cart = () => {
   const [Wishlist, setWishlist] = useState(null);
@@ -66,6 +68,13 @@ const Cart = () => {
     await addToSavedForLaterFunction(item);
     // GetCartItem();
     await RemoveFromCart(item);
+    return HandleUpdateCartContext(item);
+  };
+
+  const MoveToCart = async (item) => {
+    await addToCartFunction(item);
+    // GetCartItem();
+    await RemoveFromSavedForLater(item);
     return HandleUpdateCartContext(item);
   };
   return (
@@ -116,6 +125,7 @@ const Cart = () => {
                     item={item}
                     DiscardItem={DiscardItemFromSavedForLater}
                     savedForLater={true}
+                    MoveToCart={MoveToCart}
                   />
                 )}
                 showsVerticalScrollIndicator={false} // Hide horizontal scroll bar
@@ -139,13 +149,26 @@ const Cart = () => {
   );
 };
 
-const CartItem = ({ item, DiscardItem, savedForLater, SavedForLaterItem }) => {
+const CartItem = ({
+  item,
+  DiscardItem,
+  savedForLater,
+  SavedForLaterItem,
+  MoveToCart,
+}) => {
   const [disableRemoveBtn, setDisableRemoveBtn] = useState(false);
+  const [disableMoveToCart, setDisableMoveToCart] = useState(false);
 
   const SaveForLaterFunction = async () => {
     setDisableRemoveBtn(true);
     await SavedForLaterItem(item);
     setDisableRemoveBtn(false);
+  };
+
+  const MoveToCartFunction = async () => {
+    setDisableMoveToCart(true);
+    await MoveToCart(item);
+    setDisableMoveToCart(false);
   };
   return (
     <View className="bg-white my-1.5 ">
@@ -178,18 +201,48 @@ const CartItem = ({ item, DiscardItem, savedForLater, SavedForLaterItem }) => {
       </View>
 
       <View className="flex-row w-full border-[#00000017]  border-t-[0.5px] divide-x-[0.5px] divide-[#00000017]">
-        {!savedForLater && !disableRemoveBtn && (
-          <TouchableOpacity
-            className=" py-4 flex-1 items-center"
-            onPress={() => SaveForLaterFunction(item)}
-          >
-            <View className=" flex-row  items-center space-x-0.5 ">
-              <SaveToLaterIcon />
-              <Text className="font-CeraProBold text-[14px] text-[#00000070]">
-                Save for Later
-              </Text>
+        {!savedForLater ? (
+          !disableRemoveBtn ? (
+            <TouchableOpacity
+              className=" py-4 flex-1 items-center"
+              onPress={() => SaveForLaterFunction(item)}
+            >
+              <View className=" flex-row  items-center space-x-0.5 ">
+                <SaveToLaterIcon />
+                <Text className="font-CeraProBold text-[14px] text-[#00000070]">
+                  Save for Later
+                </Text>
+              </View>
+            </TouchableOpacity>
+          ) : (
+            <View className="flex-1 items-center justify-center">
+              <ActivityIndicator />
             </View>
-          </TouchableOpacity>
+          )
+        ) : (
+          ""
+        )}
+
+        {savedForLater ? (
+          !disableMoveToCart ? (
+            <TouchableOpacity
+              className=" py-4 flex-1 items-center"
+              onPress={() => MoveToCartFunction(item)}
+            >
+              <View className=" flex-row  items-center space-x-0.5 ">
+                <CartIcon color={"#777b81e1"} height={14} width={14} />
+                <Text className="font-CeraProBold text-[14px] text-[#00000070]">
+                  Move to Cart
+                </Text>
+              </View>
+            </TouchableOpacity>
+          ) : (
+            <View className="flex-1 items-center justify-center">
+              <ActivityIndicator />
+            </View>
+          )
+        ) : (
+          ""
         )}
         <TouchableOpacity
           className=" py-4 flex-1 items-center "
