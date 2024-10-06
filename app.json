@@ -31,12 +31,12 @@
         "origin": false
       },
       "eas": {
-        "projectId": "77b6877d-74c0-43fe-a7be-557872394f0f"
+        "projectId": "e29cbecb-5151-4f93-9ad0-a07c1a0f4ac1"
       }
     },
     "runtimeVersion": "1.0.0",
     "updates": {
-      "url": "https://u.expo.dev/77b6877d-74c0-43fe-a7be-557872394f0f"
+      "url": "https://u.expo.dev/e29cbecb-5151-4f93-9ad0-a07c1a0f4ac1"
     }
   }
 }

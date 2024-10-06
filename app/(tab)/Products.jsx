@@ -16,6 +16,7 @@ import {
   CarouselData,
   Laptops,
   Mobiles,
+  Shoes,
   watches,
 } from "../../assets/DataBase/db";
 import {
@@ -60,6 +61,7 @@ const Products = () => {
         <ProductList title="Popular Mobiles" data={Mobiles} />
         <ProductList title="Amazing Laptops" data={Laptops} />
         <ProductList title="Premium Watches" data={watches} />
+        <ProductList title="Sneaker-Head collection" data={Shoes} />
       </ScrollView>
     </>
   );

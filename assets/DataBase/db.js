@@ -114,10 +114,47 @@ export const watches = [
   },
 ];
 
+export const Shoes = [
+  {
+    productId: 81,
+    productName: "Nike, Air Jordan 4 RM ",
+    productPrice: "12,795",
+
+    productImage: require("../Products/shoes/air.webp"),
+  },
+  {
+    productId: 82,
+    productName: "Nike, Air Jordan 2 Retro",
+    productPrice: "7,999",
+    productImage: require("../Products/shoes/midtop.png"),
+    addToCart: false,
+  },
+  {
+    productId: 83,
+    productName: "Nike, Air Max Command",
+    productPrice: "4,500",
+    productImage: require("../Products/shoes/air.webp"),
+    addToCart: false,
+  },
+  {
+    productId: 84,
+    productName: "New Balance, 550 Sneakers",
+    productPrice: "10,900",
+    productImage: require("../Products/shoes/newB1.png"),
+    addToCart: false,
+  },
+  {
+    productId: 85,
+    productName: "New Balance, 327 Sneakers",
+    productPrice: "5,799",
+    productImage: require("../Products/shoes/newB2.png"),
+    addToCart: false,
+  },
+];
+
 export const CarouselData = [
   { imageId: 100, Image: require("../../assets/Products/Offers.webp") },
   { imageId: 101, Image: require("../../assets/Products/Offers2.webp") },
   { imageId: 102, Image: require("../../assets/Products/Offers3.webp") },
   { imageId: 102, Image: require("../../assets/Products/Offers4.webp") },
-
 ];
