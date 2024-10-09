@@ -308,7 +308,7 @@ const CartItem = ({
           onPress={() => {
             DiscardItem(item);
             setTotalPrice &&
-              setTotalPrice(totalPrice - Number(item.productPrice));
+              setTotalPrice(totalPrice - (qTy * Number(item.productPrice)));
           }}
         >
           <View className=" flex-row  items-center space-x-0.5 ">
