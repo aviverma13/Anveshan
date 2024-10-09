@@ -7,7 +7,7 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import React, { useCallback, useContext, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   addToCartFunction,
@@ -25,7 +25,10 @@ import CartIcon from "../../assets/SvgIcons/Cart";
 
 const Cart = () => {
   const [Wishlist, setWishlist] = useState(null);
+  const [totalCartValue, setTotalCartValue] = useState(null);
+
   const [savedForLater, setSavedForLater] = useState(null);
+  const [totalPrice, setTotalPrice] = useState(null);
 
   // console.log(Wishlist);
   const { updateCartContext, HandleUpdateCartContext } =
@@ -36,6 +39,7 @@ const Cart = () => {
     list = JSON.parse(list);
 
     setWishlist(list);
+    setTotalCartValue(Wishlist?.length);
   };
 
   const GetSavedForLaterItem = async () => {
@@ -77,6 +81,11 @@ const Cart = () => {
     await RemoveFromSavedForLater(item);
     return HandleUpdateCartContext(item);
   };
+
+  const TotalCartValue = (value) => {
+    setTotalPrice((prev) => prev + value);
+  };
+
   return (
     <View className="flex-1" showsVerticalScrollIndicator={false}>
       {Wishlist ? (
@@ -89,7 +98,12 @@ const Cart = () => {
                 item={item}
                 DiscardItem={DiscardItem}
                 savedForLater={false}
+                totalCartValue={totalCartValue}
+                setTotalCartValue={setTotalCartValue}
                 SavedForLaterItem={SavedForLaterItem}
+                setTotalPrice={setTotalPrice}
+                totalPrice={totalPrice}
+                TotalCartValue={TotalCartValue}
               />
             )}
             // Hide horizontal scroll bar
@@ -112,6 +126,7 @@ const Cart = () => {
             )}
             scrollEnabled={false}
           />
+
           {savedForLater?.length > 0 && (
             <View>
               <View className="py-2 px-2">
@@ -145,6 +160,10 @@ const Cart = () => {
           <ActivityIndicator />
         </View>
       )}
+      <View className="px-4 py-5 bg-white flex-row justify-between">
+        <Text className="font-CeraProBold text-[17px]">{`Total Cart Value `}</Text>
+        <Text className="font-CeraPro text-[17px]">{totalPrice}</Text>
+      </View>
     </View>
   );
 };
@@ -155,14 +174,37 @@ const CartItem = ({
   savedForLater,
   SavedForLaterItem,
   MoveToCart,
+  totalPrice,
+  setTotalPrice,
+  TotalCartValue,
 }) => {
   const [disableRemoveBtn, setDisableRemoveBtn] = useState(false);
   const [disableMoveToCart, setDisableMoveToCart] = useState(false);
+  const [qTy, setQty] = useState(1);
+
+  useEffect(() => {
+    if (TotalCartValue) {
+      TotalCartValue(Number(item.productPrice));
+    }
+  }, []);
+
+  const IncCount = (value) => {
+    setQty(value + 1);
+    setTotalPrice(totalPrice + Number(item.productPrice));
+  };
+
+  const DecCount = () => {
+    if (qTy > 1) {
+      setQty((prev) => prev - 1);
+      setTotalPrice(totalPrice - Number(item.productPrice));
+    }
+  };
 
   const SaveForLaterFunction = async () => {
     setDisableRemoveBtn(true);
     await SavedForLaterItem(item);
     setDisableRemoveBtn(false);
+    setTotalPrice(totalPrice - qTy * Number(item.productPrice));
   };
 
   const MoveToCartFunction = async () => {
@@ -192,6 +234,23 @@ const CartItem = ({
               ₹{item.productPrice}
             </Text>
           </View>
+          {!savedForLater && (
+            <View className="flex-row space-x-2">
+              <TouchableOpacity
+                className="w-4 items-center bg-red-400 rounded-sm"
+                onPress={() => IncCount(qTy)}
+              >
+                <Text>+</Text>
+              </TouchableOpacity>
+              <Text>{qTy}</Text>
+              <TouchableOpacity
+                className="w-4 items-center bg-red-400 rounded-sm"
+                onPress={DecCount}
+              >
+                <Text>-</Text>
+              </TouchableOpacity>
+            </View>
+          )}
           <View>
             <Text className="font-CeraProLight text-[14px] w-full">
               Delivery by tomorrow, 11PM
@@ -246,7 +305,11 @@ const CartItem = ({
         )}
         <TouchableOpacity
           className=" py-4 flex-1 items-center "
-          onPress={() => DiscardItem(item)}
+          onPress={() => {
+            DiscardItem(item);
+            setTotalPrice &&
+              setTotalPrice(totalPrice - Number(item.productPrice));
+          }}
         >
           <View className=" flex-row  items-center space-x-0.5 ">
             <DeleteIcon />
